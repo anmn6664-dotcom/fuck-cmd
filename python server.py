@@ -1,6 +1,7 @@
 import asyncio
 import json
 import websockets
+import os  # ফাইলের একদম উপরে এটি ইম্পোর্ট করে নেবেন
 
 # কানেক্টড ক্লায়েন্ট এবং ড্যাশবোর্ড স্টোর করার ডিকশনারি
 clients = {}      # Target/ESP32 Clients
@@ -58,12 +59,15 @@ async def relay_handler(websocket, path):
             dashboards.pop(client_id, None)
             print(f"[DISCONNECTED] Client ID: {client_id}")
 
+
+
 async def main():
-    # সার্ভার পোর্ট (যেমন: 8080 বা আপনার পছন্দমতো পোর্ট)
-    server_port = 8080
+    # Render-এর দেওয়া পোর্ট রিড করবে, না পেলে ডিফল্ট ৮০৮০ ব্যবহার করবে
+    server_port = int(os.environ.get("PORT", 8080))
     async with websockets.serve(relay_handler, "0.0.0.0", server_port):
         print(f"🚀 High-Performance WebSocket Relay Server running on port {server_port}...")
-        await asyncio.Future()  # সার্ভারটি একটানা চালু রাখার জন্য
+        await asyncio.Future()
+
 
 if __name__ == "__main__":
     try:
